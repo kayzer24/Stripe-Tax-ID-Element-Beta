@@ -1,13 +1,9 @@
-const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY_HERE', {
-    betas: ['elements_tax_id_1']
-});
-
-let elements, addressElement, taxIdElement, paymentElement;
+let stripe, elements, addressElement, taxIdElement, paymentElement;
 let currentCountry = null;
 let clientSecret = null;
 let paymentIntentId = null;
 let currentAmount = 2000;
-let currentCurrency = 'usd';
+let currentCurrency = 'USD';
 
 const STORAGE_KEY = 'stripe_payment_intent';
 
@@ -91,6 +87,21 @@ const taxIdTypes = {
 
 async function initialize() {
     try {
+        const configResponse = await fetch('config.php');
+        const config = await configResponse.json();
+        
+        if (!config.publishableKey) {
+            throw new Error('Publishable key not configured');
+        }
+
+        stripe = Stripe(config.publishableKey, {
+            betas: ['elements_tax_id_1']
+        });
+
+        currentAmount = config.amount || 2000;
+        currentCurrency = (config.currency || 'usd').toUpperCase();
+        updateOrderSummary();
+
         sessionStorage.removeItem(STORAGE_KEY);
         clientSecret = null;
         paymentIntentId = null;
@@ -181,10 +192,6 @@ async function createPaymentIntent() {
 
     clientSecret = data.clientSecret;
     paymentIntentId = data.paymentIntentId;
-    currentAmount = data.amount ?? 2000;
-    currentCurrency = (data.currency ?? 'usd').toUpperCase();
-    
-    updateOrderSummary();
     
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
         clientSecret: clientSecret,

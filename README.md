@@ -6,7 +6,7 @@ A complete demonstration of Stripe's Address Element, Tax ID Element, and Paymen
 
 | Layer | Technology |
 |-------|------------|
-| Backend | PHP 7.4+ |
+| Backend | PHP 8.2+ |
 | Package Manager | Composer |
 | Frontend | HTML5, CSS3, Vanilla JavaScript |
 | Payments | Stripe.js v3 |
@@ -21,7 +21,7 @@ A complete demonstration of Stripe's Address Element, Tax ID Element, and Paymen
 
 ### Prerequisites
 
-- PHP 7.4 or higher
+- PHP 8.2 or higher
 - Composer
 - A Stripe account (test mode keys)
 
@@ -34,9 +34,9 @@ A complete demonstration of Stripe's Address Element, Tax ID Element, and Paymen
    composer install
    ```
 
-3. **Configure environment variables**
+3. **Configure Stripe keys**
    
-   Copy `.env.example` to `.env` and add your Stripe API keys:
+   Copy `.env.example` to `.env` and add your Stripe keys:
    ```bash
    cp .env.example .env
    ```
@@ -45,6 +45,8 @@ A complete demonstration of Stripe's Address Element, Tax ID Element, and Paymen
    ```env
    STRIPE_SECRET_KEY=sk_test_your_secret_key_here
    STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
+   STRIPE_CURRENCY=usd
+   STRIPE_AMOUNT=2000
    ```
    
    > Get your keys from [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys)
@@ -114,38 +116,42 @@ Then open: [http://localhost:8000](http://localhost:8000)
 └── vendor/                       # Composer dependencies
 ```
 
-## GitHub Actions Deployment
+## Deployment
 
-### Setup
+### Railway (Recommended)
 
-1. **Add GitHub Secrets** in your repository settings:
+1. **Create account** at [railway.app](https://railway.app)
 
-   Go to `Settings → Secrets and variables → Actions` and add:
-   - `SSH_HOST` - Your server hostname or IP
-   - `SSH_USERNAME` - SSH username
-   - `SSH_PASSWORD` - SSH password
-   - `SSH_PORT` - SSH port (default: 22)
-   - `DEPLOY_PATH` - Path on server where to deploy
+2. **Connect GitHub repo** to Railway
 
-2. **Push to main branch** - Workflow triggers automatically
+3. **Add environment variables** in Railway dashboard:
+   - `STRIPE_SECRET_KEY` - Your Stripe secret key
+   - `STRIPE_PUBLISHABLE_KEY` - Your Stripe publishable key
+   - `STRIPE_CURRENCY` - Currency (e.g., `usd`, `eur`)
+   - `STRIPE_AMOUNT` - Amount in cents (e.g., `2000` for $20)
 
-3. **Or trigger manually** - Go to Actions tab → Deploy → Run workflow
+4. **Deploy** - Railway auto-detects PHP and deploys
 
-### Workflow Features
+### Other PHP Hosting
 
-- PHP 8.2 setup
-- Composer dependencies installation
-- PHP syntax validation
-- SSH deployment with git pull
-- Concurrency control (cancels previous deploys)
-
-### Hosting Requirements
-
-- SSH access to your server
-- Git installed on server
-- Composer installed on server
+- **Render.com** - Free PHP hosting
+- **InfinityFree** - Free PHP hosting
+- **Local development** - `composer serve`
 
 ## API Endpoints
+
+### GET `/config.php`
+
+Returns configuration for the frontend (publishable key, currency, amount).
+
+**Response:**
+```json
+{
+  "publishableKey": "pk_test_xxx",
+  "currency": "eur",
+  "amount": 2000
+}
+```
 
 ### POST `/create-payment-intent.php`
 
