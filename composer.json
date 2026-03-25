@@ -18,6 +18,10 @@
         "optimize-autoloader": true
     },
     "scripts": {
-        "serve": "php -S localhost:8000"
+        "serve": "php -S localhost:8000",
+        "lint": [
+            "@php -l index.php",
+            "@php -l create-payment-intent.php"
+        ]
     }
 }

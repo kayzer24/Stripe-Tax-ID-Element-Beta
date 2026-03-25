@@ -30,8 +30,13 @@ jobs:
 
       - name: Run PHP lint
         run: |
-          set -e
-          find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
+          for file in $(find . -name "*.php" -not -path "./vendor/*"); do
+            result=$(php -l "$file")
+            if ! echo "$result" | grep -q "No syntax errors"; then
+              echo "$result"
+              exit 1
+            fi
+          done
           echo "All PHP files passed syntax check"
 
       - name: Deploy to server
@@ -45,4 +50,3 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             git pull origin main
             composer install --no-dev --optimize-autoloader
-            chmod -R 755 storage 2>/dev/null || true
