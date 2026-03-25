@@ -107,13 +107,14 @@ Then open: [http://localhost:8000](http://localhost:8000)
 
 ```
 ├── index.php                      # Main demo page
-├── app.js                         # Frontend JavaScript
-├── create-payment-intent.php      # Backend API endpoint
-├── composer.json                  # PHP dependencies
-├── .env                          # Environment variables (not committed)
-├── .env.example                  # Environment template
-├── README.md                      # This file
-└── vendor/                       # Composer dependencies
+├── app.js                        # Frontend JavaScript
+├── config.php                    # Configuration endpoint
+├── create-payment-intent.php    # Backend API endpoint
+├── nginx.template.conf           # Railway Nginx configuration
+├── composer.json                # PHP dependencies
+├── .env                         # Environment variables (not committed)
+├── .env.example                 # Environment template
+└── vendor/                     # Composer dependencies
 ```
 
 ## Deployment
@@ -131,6 +132,8 @@ Then open: [http://localhost:8000](http://localhost:8000)
    - `STRIPE_AMOUNT` - Amount in cents (e.g., `2000` for $20)
 
 4. **Deploy** - Railway auto-detects PHP and deploys
+
+5. **Generate Domain** - Go to Settings → Networking → Generate Service Domain
 
 ### Other PHP Hosting
 
