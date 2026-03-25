@@ -30,7 +30,9 @@ jobs:
 
       - name: Run PHP lint
         run: |
-          find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \; 2>&1 | grep -v "No syntax errors"
+          set -e
+          find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
+          echo "All PHP files passed syntax check"
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.0
