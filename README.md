@@ -1,6 +1,6 @@
-# Stripe Address & Tax ID Elements Demo
+# Stripe Elements Demo
 
-A demonstration application showcasing the integration of Stripe's Address Element and Tax ID Element with automatic tax calculation support.
+A complete demonstration of Stripe's Address Element, Tax ID Element, and Payment Element integration with real-time validation and automatic tax support.
 
 ## Tech Stack
 
@@ -10,7 +10,7 @@ A demonstration application showcasing the integration of Stripe's Address Eleme
 | Package Manager | Composer |
 | Frontend | HTML5, CSS3, Vanilla JavaScript |
 | Payments | Stripe.js v3 |
-| SDK | stripe/stripe-php v13.0 |
+| SDK | stripe/stripe-php |
 
 ### Dependencies
 
@@ -36,7 +36,12 @@ A demonstration application showcasing the integration of Stripe's Address Eleme
 
 3. **Configure environment variables**
    
-   Edit the `.env` file with your Stripe API keys:
+   Copy `.env.example` to `.env` and add your Stripe API keys:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env`:
    ```env
    STRIPE_SECRET_KEY=sk_test_your_secret_key_here
    STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
@@ -46,7 +51,7 @@ A demonstration application showcasing the integration of Stripe's Address Eleme
 
 ## Running the Project
 
-### Option 1: PHP Built-in Server (Recommended for development)
+### Option 1: PHP Built-in Server (Recommended)
 
 ```bash
 composer serve
@@ -58,20 +63,19 @@ Then open: [http://localhost:8000](http://localhost:8000)
 
 1. Point your web server document root to the project directory
 2. Start the server
-3. Access via your configured localhost URL (e.g., `http://localhost/stripe-tax-id-element`)
+3. Access via your configured localhost URL
 
 ## Features
 
 ### Address Element
-- Shipping address collection mode
+- Billing address collection mode
 - Autocomplete with Google Places integration
-- Phone number field with validation
-- Real-time completion status
+- Real-time completion status badge
 
 ### Tax ID Element
 - Automatic visibility based on customer country
-- Country-specific tax ID format detection
-- Supports 60+ countries and regions:
+- Country-specific tax ID format (only shows relevant type per country)
+- Supports 60+ countries:
   - **North America**: AW, BB, BS, CA, CR, MX
   - **South America**: CL, EC, PE, SR, UY
   - **Europe**: AL, AM, AT, AZ, BA, BE, BG, BY, CH, CY, CZ, DE, DK, EE, ES, FI, FR, GB, GE, GR, HR, HU, IE, IS, IT, LI, LT, LU, LV, MD, ME, MK, MT, NL, NO, PL, PT, RO, RS, RU, SE, SI, SK, UA
@@ -79,13 +83,23 @@ Then open: [http://localhost:8000](http://localhost:8000)
   - **Oceania**: AU, NZ
   - **Africa**: AO, BF, BJ, CD, CM, CV, EG, ET, GN, KE, MA, MR, NG, SN, TZ, UG, ZA, ZM, ZW
 
-### Status Badges
-- Real-time completion status for Address and Tax ID fields
-- Visual feedback (green = complete, yellow = incomplete)
+### Payment Element
+- Multiple payment methods (cards, SEPA, Klarna, etc.)
+- Tabbed layout for easy selection
+- Real-time completion status
 
-### Session Management
-- PaymentIntent caching via sessionStorage
-- Reuses existing PaymentIntent on page refresh
+### Order Summary
+- Displays amount and currency
+- Updates dynamically from backend
+
+### Success Flow
+- Form becomes disabled after successful payment
+- Success overlay with transaction details
+- "Make New Payment" button to restart
+
+### Status Badges
+- Real-time visual feedback (green = complete, yellow = incomplete)
+- Shows status for: Address, Tax ID, Payment
 
 ## File Structure
 
@@ -94,7 +108,9 @@ Then open: [http://localhost:8000](http://localhost:8000)
 ├── app.js                         # Frontend JavaScript
 ├── create-payment-intent.php      # Backend API endpoint
 ├── composer.json                  # PHP dependencies
-├── .env                          # Environment variables (create from .env.example)
+├── .env                          # Environment variables (not committed)
+├── .env.example                  # Environment template
+├── README.md                      # This file
 └── vendor/                       # Composer dependencies
 ```
 
@@ -104,25 +120,21 @@ Then open: [http://localhost:8000](http://localhost:8000)
 
 Creates a new PaymentIntent with automatic payment methods enabled.
 
-**Request:**
+**Response:**
 ```json
 {
+  "clientSecret": "pi_xxx_secret_xxx",
+  "paymentIntentId": "pi_xxx",
   "amount": 2000,
   "currency": "usd"
 }
 ```
 
-**Response:**
-```json
-{
-  "clientSecret": "pi_xxx_secret_xxx",
-  "paymentIntentId": "pi_xxx"
-}
-```
-
 ## Testing
 
-Use Stripe's [test cards](https://stripe.com/docs/testing) to test the integration:
+### Test Cards
+
+Use Stripe's [test cards](https://stripe.com/docs/testing):
 
 | Card Number | Scenario |
 |-------------|----------|
@@ -132,15 +144,17 @@ Use Stripe's [test cards](https://stripe.com/docs/testing) to test the integrati
 ### Test Tax IDs
 
 Use any alphanumeric string in the correct format for the selected country:
-- **Germany (EU VAT)**: DE123456789
-- **UK (VAT)**: GB123456789
-- **Australia (ABN)**: 12345678912
-- **Singapore (GST)**: M12345678X
+- **Germany (EU VAT)**: `DE123456789`
+- **UK (VAT)**: `GB123456789`
+- **Australia (ABN)**: `12345678912`
+- **Singapore (GST)**: `M12345678X`
+- **France (EU VAT)**: `FR12345678901`
 
 ## Documentation
 
 - [Stripe Address Element](https://stripe.com/docs/elements/address-element)
 - [Stripe Tax ID Element](https://stripe.com/docs/elements/tax-id-element)
+- [Stripe Payment Element](https://stripe.com/docs/payments/payment-element)
 - [Stripe Tax Documentation](https://stripe.com/docs/payments/advanced/tax)
 
 ## License

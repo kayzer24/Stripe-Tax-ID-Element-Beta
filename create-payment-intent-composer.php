@@ -35,7 +35,7 @@ try {
     // Create a PaymentIntent with automatic payment methods
     $paymentIntent = \Stripe\PaymentIntent::create([
         'amount' => 2000, // Amount in cents ($20.00)
-        'currency' => 'usd',
+        'currency' => 'eur',
         'automatic_payment_methods' => [
             'enabled' => true,
         ],

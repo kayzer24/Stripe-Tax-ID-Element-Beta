@@ -202,13 +202,152 @@
             justify-content: space-between;
             margin-bottom: 15px;
         }
+
+        .order-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .order-summary h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .order-summary-details {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .order-summary-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-summary-label {
+            font-size: 11px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        .order-summary-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .button-group .submit-btn {
+            flex: 1;
+        }
+
+        .button-group .clear-btn {
+            width: auto;
+        }
+
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .success-overlay.show {
+            display: flex;
+        }
+
+        .success-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: white;
+        }
+
+        .success-content h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .success-content p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .success-content .result {
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .form-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .success-result {
+            display: block;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🎯 Stripe Elements Demo</h1>
-            <p>Address Element + Tax ID Element Integration</p>
+            <p>Address Element + Tax ID Element + Payment Emelement Integration</p>
         </div>
 
         <div class="content">
@@ -223,6 +362,28 @@
             </div>
 
             <form id="payment-form">
+                <div id="form-wrapper">
+                <div class="order-summary">
+                    <h3>
+                        <span>Order Summary</span>
+                        <button type="button" class="clear-btn" id="clear-btn">Clear Form</button>
+                    </h3>
+                    <div class="order-summary-details">
+                        <div class="order-summary-item">
+                            <span class="order-summary-label">Amount</span>
+                            <span class="order-summary-value" id="summary-amount">$20.00</span>
+                        </div>
+                        <div class="order-summary-item">
+                            <span class="order-summary-label">Currency</span>
+                            <span class="order-summary-value" id="summary-currency">EUR</span>
+                        </div>
+                        <div class="order-summary-item">
+                            <span class="order-summary-label">Product</span>
+                            <span class="order-summary-value">Demo Item</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="section">
                     <div class="section-header">
                         <h2>📍 Shipping Address <span class="badge">Required</span></h2>
@@ -250,20 +411,43 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn" id="submit-btn">
-                    Submit Form
-                </button>
+                <div class="section">
+                    <div class="section-header">
+                        <h2>💳 Payment Details <span class="badge">Required</span></h2>
+                        <span class="status-badge incomplete" data-status="payment">Incomplete</span>
+                    </div>
+                    <div id="payment-element" class="element-container">
+                        <!-- Payment Element will be mounted here -->
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        Pay Now
+                    </button>
+                </div>
 
                 <div class="error" id="error-message"></div>
                 <div class="loading" id="loading">
                     <p>Processing...</p>
                 </div>
-            </form>
+                </div>
 
-            <div class="result" id="result">
-                <h3>✅ Collected Data</h3>
-                <pre id="result-data"></pre>
-            </div>
+                <div class="success-overlay" id="success-overlay">
+                    <div class="success-content">
+                        <div class="success-icon">✓</div>
+                        <h2>Payment Successful!</h2>
+                        <p>Your payment has been processed successfully.</p>
+                        <div class="result success-result" id="success-result">
+                            <h3>Transaction Details</h3>
+                            <pre id="success-result-data"></pre>
+                        </div>
+                        <button type="button" class="submit-btn" id="new-payment-btn">
+                            Make New Payment
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 

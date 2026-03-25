@@ -24,9 +24,12 @@ try {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true) ?? [];
 
+    $currency = $data['currency'] ?? $_ENV['STRIPE_CURRENCY'] ?? 'usd';
+    $amount = $data['amount'] ?? intval($_ENV['STRIPE_AMOUNT'] ?? 2000);
+
     $paymentIntent = PaymentIntent::create([
-        'amount' => $data['amount'] ?? 2000,
-        'currency' => $data['currency'] ?? 'usd',
+        'amount' => $amount,
+        'currency' => strtolower($currency),
         'automatic_payment_methods' => ['enabled' => true],
         'metadata' => ['demo' => 'address_tax_id_elements'],
     ]);
@@ -34,6 +37,8 @@ try {
     echo json_encode([
         'clientSecret' => $paymentIntent->client_secret,
         'paymentIntentId' => $paymentIntent->id,
+        'amount' => $amount,
+        'currency' => $currency,
     ]);
 
 } catch (\Stripe\Exception\ApiErrorException $e) {
