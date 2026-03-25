@@ -1,0 +1,2 @@
+[phases.setup]
+cmds = ["composer install --no-interaction --optimize-autoloader"]

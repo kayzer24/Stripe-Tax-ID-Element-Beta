@@ -15,8 +15,12 @@ ini_set('display_errors', 0);
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
+function getEnvVar(string $name, $default = ''): string {
+    return $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name) ?: $default;
+}
+
 echo json_encode([
-    'publishableKey' => $_ENV['STRIPE_PUBLISHABLE_KEY'] ?? '',
-    'currency' => $_ENV['STRIPE_CURRENCY'] ?? 'usd',
-    'amount' => intval($_ENV['STRIPE_AMOUNT'] ?? 2000),
+    'publishableKey' => getEnvVar('STRIPE_PUBLISHABLE_KEY', ''),
+    'currency' => getEnvVar('STRIPE_CURRENCY', 'usd'),
+    'amount' => intval(getEnvVar('STRIPE_AMOUNT', '2000')),
 ]);

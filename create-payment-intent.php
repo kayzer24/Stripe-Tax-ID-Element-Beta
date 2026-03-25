@@ -7,7 +7,6 @@
  */
 
 require_once __DIR__ . '/vendor/autoload.php';
-use Dotenv\Dotenv;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
@@ -15,17 +14,18 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->safeLoad();
+function getEnvVar(string $name, $default = ''): string {
+    return $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name) ?: $default;
+}
 
-Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+Stripe::setApiKey(getEnvVar('STRIPE_SECRET_KEY'));
 
 try {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true) ?? [];
 
-    $currency = $data['currency'] ?? $_ENV['STRIPE_CURRENCY'] ?? 'usd';
-    $amount = $data['amount'] ?? intval($_ENV['STRIPE_AMOUNT'] ?? 2000);
+    $currency = $data['currency'] ?? getEnvVar('STRIPE_CURRENCY', 'usd');
+    $amount = $data['amount'] ?? intval(getEnvVar('STRIPE_AMOUNT', '2000'));
 
     $paymentIntent = PaymentIntent::create([
         'amount' => $amount,
