@@ -114,6 +114,37 @@ Then open: [http://localhost:8000](http://localhost:8000)
 └── vendor/                       # Composer dependencies
 ```
 
+## GitHub Actions Deployment
+
+### Setup
+
+1. **Add GitHub Secrets** in your repository settings:
+
+   Go to `Settings → Secrets and variables → Actions` and add:
+   - `SSH_HOST` - Your server hostname or IP
+   - `SSH_USERNAME` - SSH username
+   - `SSH_PASSWORD` - SSH password
+   - `SSH_PORT` - SSH port (default: 22)
+   - `DEPLOY_PATH` - Path on server where to deploy
+
+2. **Push to main branch** - Workflow triggers automatically
+
+3. **Or trigger manually** - Go to Actions tab → Deploy → Run workflow
+
+### Workflow Features
+
+- PHP 8.2 setup
+- Composer dependencies installation
+- PHP syntax validation
+- SSH deployment with git pull
+- Concurrency control (cancels previous deploys)
+
+### Hosting Requirements
+
+- SSH access to your server
+- Git installed on server
+- Composer installed on server
+
 ## API Endpoints
 
 ### POST `/create-payment-intent.php`
