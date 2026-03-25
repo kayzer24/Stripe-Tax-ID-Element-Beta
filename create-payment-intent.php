@@ -7,6 +7,7 @@
  */
 
 require_once __DIR__ . '/vendor/autoload.php';
+use Dotenv\Dotenv;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
@@ -14,11 +15,23 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = Dotenv::createImmutable(__DIR__);
+    $dotenv->safeLoad();
+}
+
 function getEnvVar(string $name, $default = ''): string {
     return $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name) ?: $default;
 }
 
-Stripe::setApiKey(getEnvVar('STRIPE_SECRET_KEY'));
+$apiKey = getEnvVar('STRIPE_SECRET_KEY');
+if (empty($apiKey)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Stripe API key not configured']);
+    exit;
+}
+
+Stripe::setApiKey($apiKey);
 
 try {
     $input = file_get_contents('php://input');

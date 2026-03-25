@@ -12,8 +12,10 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->safeLoad();
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = Dotenv::createImmutable(__DIR__);
+    $dotenv->safeLoad();
+}
 
 function getEnvVar(string $name, $default = ''): string {
     return $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name) ?: $default;
